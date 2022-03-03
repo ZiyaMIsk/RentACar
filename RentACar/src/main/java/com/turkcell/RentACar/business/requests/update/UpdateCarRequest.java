@@ -1,5 +1,9 @@
 package com.turkcell.RentACar.business.requests.update;
 
+import java.util.List;
+
+import com.turkcell.RentACar.business.dtos.color.ColorIdDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,5 +19,5 @@ public class UpdateCarRequest {
 	private int modelYear;
 	private String description;
 	private int brandId;
-	private int colorId;
+	private List<ColorIdDto> colorIds;
 }

@@ -9,5 +9,5 @@ import com.turkcell.RentACar.entities.Brand;
 public interface BrandDao extends JpaRepository<Brand, Integer>{
 
 	boolean existsByBrandName(String name);
-	boolean existsByBrandId(int id);
+	Brand findByBrandId(int brandId);
 }

@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.turkcell.RentACar.business.abstracts.ColorService;
 import com.turkcell.RentACar.business.dtos.color.ColorDto;
 import com.turkcell.RentACar.business.dtos.color.ListColorDto;
-import com.turkcell.RentACar.business.exceptions.BusinessException;
 import com.turkcell.RentACar.business.requests.create.CreateColorRequest;
-import com.turkcell.RentACar.business.requests.delete.DeleteColorRequest;
 import com.turkcell.RentACar.business.requests.update.UpdateColorRequest;
+import com.turkcell.RentACar.core.utilites.results.DataResult;
+import com.turkcell.RentACar.core.utilites.results.Result;
 
 @RestController
 @RequestMapping
@@ -32,27 +32,27 @@ public class ColorsController {
 	}
 	
 	@GetMapping("/listall")
-	public List<ListColorDto> listAll(){
+	public DataResult<List<ListColorDto>> listAll(){
 		return this.colorService.listAll();
 	}
 	
 	@PostMapping("/create")
-	public void create(@RequestBody CreateColorRequest createColorRequest) throws BusinessException {
-		this.colorService.create(createColorRequest);
+	public Result create(@RequestBody CreateColorRequest createColorRequest){
+		return this.colorService.create(createColorRequest);
 	}
 	
 	@PutMapping("/update")
-	public void update(@RequestParam UpdateColorRequest updateColorRequest) throws BusinessException {
-		this.colorService.update(updateColorRequest);
+	public Result update(@RequestBody UpdateColorRequest updateColorRequest){
+		return this.colorService.update(updateColorRequest);
 	}
 	
 	@DeleteMapping("/delete")
-    public void delete(@RequestBody DeleteColorRequest deleteColorRequest) throws BusinessException {
-        this.colorService.delete(deleteColorRequest);
+    public Result delete(@RequestBody int colorId){
+		return this.colorService.delete(colorId);
     }
 	
 	@GetMapping("/getbyid")
-	public ColorDto getById (@RequestParam int colorId) throws BusinessException{
+	public DataResult<ColorDto> getById (@RequestParam int colorId){
 		return this.colorService.getById(colorId);
 	}
 }

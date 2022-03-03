@@ -8,7 +8,7 @@ import com.turkcell.RentACar.core.utilites.mapping.abstracts.ModelMapperService;
 
 @Service
 public class ModelMapperManager implements ModelMapperService{
-private ModelMapper modelMapper;
+	private ModelMapper modelMapper;
 	
 	public ModelMapperManager(ModelMapper modelMapper) {
 		this.modelMapper = modelMapper;

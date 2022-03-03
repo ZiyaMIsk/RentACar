@@ -9,5 +9,5 @@ import com.turkcell.RentACar.entities.Color;
 public interface ColorDao extends JpaRepository<Color, Integer> {
 
 	boolean existsByColorName(String name);
-	boolean existsByColorId(int id);
+	Color findByColorId(int id);
 }

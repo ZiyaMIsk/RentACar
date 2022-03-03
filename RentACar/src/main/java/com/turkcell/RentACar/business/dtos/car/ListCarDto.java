@@ -19,5 +19,5 @@ public class ListCarDto {
 	private int modelYear;
 	private String description;
 	private String brandName;
-	private List<ListColorDto> colors;
+	private List<ListColorDto> colorList;
 }
