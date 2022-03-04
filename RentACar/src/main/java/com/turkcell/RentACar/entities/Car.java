@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -50,4 +51,8 @@ public class Car {
 	joinColumns = @JoinColumn(name="car_id"),
 	inverseJoinColumns = @JoinColumn(name="color_id"))
 	private List<Color> colorList;	
+	
+	
+	@OneToMany(mappedBy = "car")
+	private List<CarMaintenance> carMaintenanceList;	
 }
