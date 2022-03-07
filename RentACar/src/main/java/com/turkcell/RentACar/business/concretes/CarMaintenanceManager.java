@@ -7,13 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.turkcell.RentACar.business.abstracts.CarMaintenanceService;
-import com.turkcell.RentACar.business.dtos.brand.BrandDto;
-import com.turkcell.RentACar.business.dtos.brand.ListBrandDto;
-import com.turkcell.RentACar.business.dtos.carMaintenance.CarMaintenanceDto;
 import com.turkcell.RentACar.business.dtos.carMaintenance.ListCarMaintenanceDto;
-import com.turkcell.RentACar.business.requests.create.CreateBrandRequest;
 import com.turkcell.RentACar.business.requests.create.CreateCarMaintenanceRequest;
-import com.turkcell.RentACar.business.requests.update.UpdateBrandRequest;
 import com.turkcell.RentACar.business.requests.update.UpdateCarMaintenanceRequest;
 import com.turkcell.RentACar.core.utilites.mapping.abstracts.ModelMapperService;
 import com.turkcell.RentACar.core.utilites.results.DataResult;
@@ -23,7 +18,6 @@ import com.turkcell.RentACar.core.utilites.results.Result;
 import com.turkcell.RentACar.core.utilites.results.SuccessDataResult;
 import com.turkcell.RentACar.core.utilites.results.SuccessResult;
 import com.turkcell.RentACar.dataAccess.abstracts.CarMaintenanceDao;
-import com.turkcell.RentACar.entities.Brand;
 import com.turkcell.RentACar.entities.CarMaintenance;
 
 @Service
@@ -42,6 +36,9 @@ public class CarMaintenanceManager implements CarMaintenanceService {
 	@Override     
 	public DataResult<List<ListCarMaintenanceDto>> listAll() { 
 		List<CarMaintenance> carMaintenanceList = this.carMaintenanceDao.findAll();  
+		if (!checkIfCarMaintenanceListEmpty(carMaintenanceList).isSuccess()) {
+			return new ErrorDataResult<List<ListCarMaintenanceDto>>(checkIfCarMaintenanceListEmpty(carMaintenanceList).getMessage());
+		}
 		List<ListCarMaintenanceDto> response = carMaintenanceList.stream()                 
 				.map(carMaintenance -> modelMapperService.forDto().map(carMaintenance, ListCarMaintenanceDto.class))    
 				.collect(Collectors.toList());          
@@ -51,46 +48,54 @@ public class CarMaintenanceManager implements CarMaintenanceService {
 
 	@Override    
 	public Result create(CreateCarMaintenanceRequest createCarMaintananceRequest) {  
-		
-		CarMaintenance carMaintanance = this.modelMapperService.forRequest().map(createCarMaintananceRequest,     
-				CarMaintenance.class);                    
-		this.carMaintenanceDao.save(carMaintanance);         
+		CarMaintenance carMaintenance = this.modelMapperService.forRequest().map(createCarMaintananceRequest,     
+				CarMaintenance.class);   
+		if (!checkCarMaintenanceId(carMaintenance.getId()).isSuccess()) {
+			return new ErrorResult(checkCarMaintenanceId(carMaintenance.getId()).getMessage());
+		}
+		                 
+		this.carMaintenanceDao.save(carMaintenance);         
 		return new SuccessResult("eklendi.");    
 		}
 
 	
 	@Override
 	public Result update(UpdateCarMaintenanceRequest updateCarMaintenanceRequest) {
-		if (!checkBrandId(updateBrandRequest.getBrandId()).isSuccess()) {
-			return new ErrorResult(checkBrandId(updateBrandRequest.getBrandId()).getMessage());
+		if (!checkCarMaintenanceId(updateCarMaintenanceRequest.getCarId()).isSuccess()) {
+			return new ErrorResult(checkCarMaintenanceId(updateCarMaintenanceRequest.getCarId()).getMessage());
 		}
-		if (!checkBrandName(updateBrandRequest.getBrandName()).isSuccess()) {
-			return new ErrorResult(checkBrandName(updateBrandRequest.getBrandName()).getMessage());
+		if (!checkCarMaintenanceId(updateCarMaintenanceRequest.getId()).isSuccess()) {
+			return new ErrorResult(checkCarMaintenanceId(updateCarMaintenanceRequest.getId()).getMessage());
 		}
-		Brand brand = this.modelMapperService.forRequest().map(updateBrandRequest, Brand.class);
-		this.brandDao.save(brand);
-		return new SuccessDataResult<UpdateBrandRequest>(updateBrandRequest,
-				"Data updated to: " + brand.getBrandName());
+		CarMaintenance carMaintenance = this.modelMapperService.forRequest().map(updateCarMaintenanceRequest, CarMaintenance.class);
+		this.carMaintenanceDao.save(carMaintenance);
+		return new SuccessDataResult<UpdateCarMaintenanceRequest>(updateCarMaintenanceRequest, "Data updated to: " + carMaintenance.getId());
 	}
 
 	@Override
 	public Result delete(int carMaintenanceId) {
-		if (!checkBrandId(brandId).isSuccess()) {
-			return new ErrorResult(checkBrandId(brandId).getMessage());
+		if (!checkCarMaintenanceId(carMaintenanceId).isSuccess()) {
+			return new ErrorResult(checkCarMaintenanceId(carMaintenanceId).getMessage());
 		}
-		String brandNameBeforeDelete = this.brandDao.findByBrandId(brandId).getBrandName();
-		this.brandDao.deleteById(brandId);
-		return new SuccessResult("Data deleted : " + brandNameBeforeDelete);
+		
+		this.carMaintenanceDao.deleteById(carMaintenanceId);
+		return new SuccessResult("Data deleted.");
 	}
 
-	@Override
-	public DataResult<CarMaintenanceDto> getAllByCarId(int id) {
-		if (!checkBrandId(brandId).isSuccess()) {
-			return new ErrorDataResult<BrandDto>(checkBrandId(brandId).getMessage());
+	
+	
+	private Result checkCarMaintenanceId(int carMaintenanceId) {
+		if (!this.carMaintenanceDao.existsById(carMaintenanceId)) {
+			return new ErrorResult("This maintenance id is undefined!");
 		}
-		Brand brand = this.brandDao.getById(brandId);
-		BrandDto brandDto = this.modelMapperService.forDto().map(brand, BrandDto.class);
-		return new SuccessDataResult<BrandDto>(brandDto, "Data getted by id");
+		return new SuccessResult();
+	}
+	
+	private Result checkIfCarMaintenanceListEmpty(List<CarMaintenance> carMaintenances) {
+		if (carMaintenances.isEmpty()) {
+			return new ErrorDataResult<List<CarMaintenance>>("There is no car in maintenance exists in the list!");
+		}
+		return new SuccessResult();
 	}
 
 }

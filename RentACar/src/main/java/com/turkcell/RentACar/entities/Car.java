@@ -54,5 +54,11 @@ public class Car {
 	
 	
 	@OneToMany(mappedBy = "car")
-	private List<CarMaintenance> carMaintenanceList;	
+	private List<CarMaintenance> carMaintenanceList;
+	
+	@OneToMany(mappedBy = "car")
+    private List<Renting> rentings;
+
+	@Column(name="is_active")
+    private boolean isActive = true;
 }

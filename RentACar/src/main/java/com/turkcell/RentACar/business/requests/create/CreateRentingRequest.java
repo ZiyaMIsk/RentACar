@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateCarMaintenanceRequest {
-	private String description; 
-	private int carId;
+public class CreateRentingRequest {
+	private LocalDate rentDate;
 	private LocalDate returnDate;
+	private  int customerId;
+	private int carId;
 
 }
